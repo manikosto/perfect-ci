@@ -9,13 +9,13 @@
       "total" : 1
     },
     "items" : [ {
-      "uid" : "3b920ce79688917f",
+      "uid" : "e3382d28a949a865",
       "status" : "broken",
       "statusDetails" : "selenium.common.exceptions.InvalidArgumentException: Message: invalid argument\n  (Session info: chrome=131.0.6778.108)",
       "time" : {
-        "start" : 1748260070333,
-        "stop" : 1748260070341,
-        "duration" : 8
+        "start" : 1748260272322,
+        "stop" : 1748260272328,
+        "duration" : 6
       }
     } ]
   },
@@ -29,13 +29,13 @@
       "total" : 1
     },
     "items" : [ {
-      "uid" : "f2cbb7ef995a3bfe",
+      "uid" : "2209ec28281863f6",
       "status" : "broken",
       "statusDetails" : "selenium.common.exceptions.InvalidArgumentException: Message: invalid argument\n  (Session info: chrome=131.0.6778.108)",
       "time" : {
-        "start" : 1748260070343,
-        "stop" : 1748260070360,
-        "duration" : 17
+        "start" : 1748260272339,
+        "stop" : 1748260272345,
+        "duration" : 6
       }
     } ]
   }
