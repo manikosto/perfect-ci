@@ -50,7 +50,7 @@ jobs:
       - name: Run tests via docker-compose
         env:
           BROWSER: ${{ inputs.BROWSER }}
-          STAGE: ${{ inputs.STAGE }}
+          STAGE: ${{ vars.STAGE }}
         run: |
           docker compose up tests
 
