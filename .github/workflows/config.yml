@@ -9,6 +9,16 @@ on:
         required: true
         type: environment # 🔹 Важно: это тип environment!
 
+      BROWSER:
+        description: "Select the browser"
+        required: true
+        default: "chrome"
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - safari
+
       MARKER:
         description: "Choose microservice to test"
         required: true
@@ -35,6 +45,11 @@ jobs:
     steps:
       # Клонируем репозиторий
       - uses: actions/checkout@v2
+
+      - uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: ./.github/gh-pages
 
       # Подготовка environment.properties
       - name: Prepare Allure environment
@@ -64,7 +79,7 @@ jobs:
       # Шаг 5 - Генерация отчета
       - name: Generate Allure-report
         env:
-          BROWSER: ${{ vars.BROWSER }}
+          BROWSER: ${{ inputs.BROWSER }}
           STAGE: ${{ secrets.STAGE }}
           CI_COMMIT_REF_NAME: ${{ github.ref_name }}
           CI_COMMIT_SHORT_SHA: ${{ github.sha }}
