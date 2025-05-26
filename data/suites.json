@@ -7,27 +7,27 @@
       "children" : [ {
         "name" : "TestExample",
         "children" : [ {
-          "name" : "Test Example",
-          "uid" : "7897a442caac1f0f",
+          "name" : "Test Example 2",
+          "uid" : "3b920ce79688917f",
           "parentUid" : "dba2c98cf57337371168134be9b6792d",
           "status" : "broken",
           "time" : {
-            "start" : 1748259732550,
-            "stop" : 1748259732556,
-            "duration" : 6
+            "start" : 1748260070333,
+            "stop" : 1748260070341,
+            "duration" : 8
           },
           "flaky" : false,
           "newFailed" : false,
           "parameters" : [ ]
         }, {
-          "name" : "Test Example 2",
-          "uid" : "43f0db7ca7405364",
+          "name" : "Test Example",
+          "uid" : "f2cbb7ef995a3bfe",
           "parentUid" : "dba2c98cf57337371168134be9b6792d",
           "status" : "broken",
           "time" : {
-            "start" : 1748259732583,
-            "stop" : 1748259732589,
-            "duration" : 6
+            "start" : 1748260070343,
+            "stop" : 1748260070360,
+            "duration" : 17
           },
           "flaky" : false,
           "newFailed" : false,
