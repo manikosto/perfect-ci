@@ -7,7 +7,7 @@ services:
     volumes:
       - ./:/usr/workspace
     environment:
-      STAGE: ${STAGE:-dev}
+      STAGE: ${STAGE}
       SUITE: ${SUITE:-regression}
       THREADS: ${THREADS:-5}
     command: /bin/sh -c "STAGE=$$STAGE pytest -sv -o log_cli=true -n=$$THREADS -m=$$MARKER --alluredir=allure-results" # Команда для выполнения в контейнере
