@@ -8,25 +8,25 @@
         "name" : "TestExample",
         "children" : [ {
           "name" : "Test Example",
-          "uid" : "26298ddf1efda22c",
+          "uid" : "7897a442caac1f0f",
           "parentUid" : "dba2c98cf57337371168134be9b6792d",
           "status" : "broken",
           "time" : {
-            "start" : 1748259597579,
-            "stop" : 1748259597587,
-            "duration" : 8
+            "start" : 1748259732550,
+            "stop" : 1748259732556,
+            "duration" : 6
           },
           "flaky" : false,
           "newFailed" : false,
           "parameters" : [ ]
         }, {
           "name" : "Test Example 2",
-          "uid" : "81efe825b47ad58e",
+          "uid" : "43f0db7ca7405364",
           "parentUid" : "dba2c98cf57337371168134be9b6792d",
           "status" : "broken",
           "time" : {
-            "start" : 1748259597607,
-            "stop" : 1748259597613,
+            "start" : 1748259732583,
+            "stop" : 1748259732589,
             "duration" : 6
           },
           "flaky" : false,
