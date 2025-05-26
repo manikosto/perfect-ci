@@ -1,0 +1,14 @@
+.env
+models/*
+schema.graphql
+schema.py
+schema.json
+builders
+.venv
+.DS_Store
+allurectl
+.idea
+*__pycache__*
+report
+venv
+allure-results
