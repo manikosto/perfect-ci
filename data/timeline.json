@@ -1,43 +1,43 @@
 {
   "uid" : "ab17fc5a4eb3bca4b216b548c7f9fcbc",
   "children" : [ {
-    "name" : "1902cc384967",
+    "name" : "f68facc3e199",
     "children" : [ {
+      "name" : "10-MainThread",
+      "children" : [ {
+        "name" : "Test Example 2",
+        "uid" : "6368e3adaeb967fc",
+        "parentUid" : "7a7831aec4ace3aadc499d2d4a5b3ec4",
+        "status" : "passed",
+        "time" : {
+          "start" : 1748260744547,
+          "stop" : 1748260747306,
+          "duration" : 2759
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "7a7831aec4ace3aadc499d2d4a5b3ec4"
+    }, {
       "name" : "7-MainThread",
       "children" : [ {
         "name" : "Test Example",
-        "uid" : "743b8caaa7921681",
-        "parentUid" : "9efe933a447f8ac57eecb3dd111a84fc",
-        "status" : "broken",
+        "uid" : "8b90690294e198a9",
+        "parentUid" : "bd41eb2bb0a19582c130d8e4f1a652aa",
+        "status" : "passed",
         "time" : {
-          "start" : 1748260619927,
-          "stop" : 1748260619933,
-          "duration" : 6
+          "start" : 1748260744544,
+          "stop" : 1748260747341,
+          "duration" : 2797
         },
         "flaky" : false,
         "newFailed" : false,
         "parameters" : [ ]
       } ],
-      "uid" : "9efe933a447f8ac57eecb3dd111a84fc"
-    }, {
-      "name" : "13-MainThread",
-      "children" : [ {
-        "name" : "Test Example 2",
-        "uid" : "a460d93b1ff1fb93",
-        "parentUid" : "931a02e2a752a5e283ab3d4a051ffa90",
-        "status" : "broken",
-        "time" : {
-          "start" : 1748260619880,
-          "stop" : 1748260619886,
-          "duration" : 6
-        },
-        "flaky" : false,
-        "newFailed" : false,
-        "parameters" : [ ]
-      } ],
-      "uid" : "931a02e2a752a5e283ab3d4a051ffa90"
+      "uid" : "bd41eb2bb0a19582c130d8e4f1a652aa"
     } ],
-    "uid" : "1031da5299da86bcbb39c07d0bf89660"
+    "uid" : "ea33463f7018f82fc44cfd3f5a23a0de"
   } ],
   "name" : "timeline"
 }

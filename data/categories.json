@@ -1,39 +1,5 @@
 {
   "uid" : "4b4757e66a1912dae1a509f688f20b0f",
-  "children" : [ {
-    "name" : "Test defects",
-    "children" : [ {
-      "name" : "selenium.common.exceptions.InvalidArgumentException: Message: invalid argument\n  (Session info: chrome=131.0.6778.108)",
-      "children" : [ {
-        "name" : "Test Example 2",
-        "uid" : "a460d93b1ff1fb93",
-        "parentUid" : "18dad8d4e49a14c718155436d13156fb",
-        "status" : "broken",
-        "time" : {
-          "start" : 1748260619880,
-          "stop" : 1748260619886,
-          "duration" : 6
-        },
-        "flaky" : false,
-        "newFailed" : false,
-        "parameters" : [ ]
-      }, {
-        "name" : "Test Example",
-        "uid" : "743b8caaa7921681",
-        "parentUid" : "18dad8d4e49a14c718155436d13156fb",
-        "status" : "broken",
-        "time" : {
-          "start" : 1748260619927,
-          "stop" : 1748260619933,
-          "duration" : 6
-        },
-        "flaky" : false,
-        "newFailed" : false,
-        "parameters" : [ ]
-      } ],
-      "uid" : "18dad8d4e49a14c718155436d13156fb"
-    } ],
-    "uid" : "bdbf199525818fae7a8651db9eafe741"
-  } ],
+  "children" : [ ],
   "name" : "categories"
 }
