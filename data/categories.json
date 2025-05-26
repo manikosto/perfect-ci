@@ -6,12 +6,12 @@
       "name" : "selenium.common.exceptions.InvalidArgumentException: Message: invalid argument\n  (Session info: chrome=131.0.6778.108)",
       "children" : [ {
         "name" : "Test Example 2",
-        "uid" : "e3382d28a949a865",
+        "uid" : "a460d93b1ff1fb93",
         "parentUid" : "18dad8d4e49a14c718155436d13156fb",
         "status" : "broken",
         "time" : {
-          "start" : 1748260272322,
-          "stop" : 1748260272328,
+          "start" : 1748260619880,
+          "stop" : 1748260619886,
           "duration" : 6
         },
         "flaky" : false,
@@ -19,12 +19,12 @@
         "parameters" : [ ]
       }, {
         "name" : "Test Example",
-        "uid" : "2209ec28281863f6",
+        "uid" : "743b8caaa7921681",
         "parentUid" : "18dad8d4e49a14c718155436d13156fb",
         "status" : "broken",
         "time" : {
-          "start" : 1748260272339,
-          "stop" : 1748260272345,
+          "start" : 1748260619927,
+          "stop" : 1748260619933,
           "duration" : 6
         },
         "flaky" : false,
