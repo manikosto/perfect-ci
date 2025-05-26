@@ -1,5 +1,5 @@
 services:
-  regression:
+  tests:
     image: ui:v1
     build:
       context: .
