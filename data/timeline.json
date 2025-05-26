@@ -1,43 +1,43 @@
 {
   "uid" : "ab17fc5a4eb3bca4b216b548c7f9fcbc",
   "children" : [ {
-    "name" : "f68facc3e199",
+    "name" : "48bb7952f271",
     "children" : [ {
-      "name" : "10-MainThread",
-      "children" : [ {
-        "name" : "Test Example 2",
-        "uid" : "6368e3adaeb967fc",
-        "parentUid" : "7a7831aec4ace3aadc499d2d4a5b3ec4",
-        "status" : "passed",
-        "time" : {
-          "start" : 1748260744547,
-          "stop" : 1748260747306,
-          "duration" : 2759
-        },
-        "flaky" : false,
-        "newFailed" : false,
-        "parameters" : [ ]
-      } ],
-      "uid" : "7a7831aec4ace3aadc499d2d4a5b3ec4"
-    }, {
       "name" : "7-MainThread",
       "children" : [ {
         "name" : "Test Example",
-        "uid" : "8b90690294e198a9",
-        "parentUid" : "bd41eb2bb0a19582c130d8e4f1a652aa",
+        "uid" : "4d9db4bf98b1e065",
+        "parentUid" : "9bae78ed637dc17ddda737735603b372",
         "status" : "passed",
         "time" : {
-          "start" : 1748260744544,
-          "stop" : 1748260747341,
-          "duration" : 2797
+          "start" : 1748261331166,
+          "stop" : 1748261333753,
+          "duration" : 2587
         },
         "flaky" : false,
         "newFailed" : false,
         "parameters" : [ ]
       } ],
-      "uid" : "bd41eb2bb0a19582c130d8e4f1a652aa"
+      "uid" : "9bae78ed637dc17ddda737735603b372"
+    }, {
+      "name" : "10-MainThread",
+      "children" : [ {
+        "name" : "Test Example 2",
+        "uid" : "b1b3872691c43b1e",
+        "parentUid" : "65fa494f729651f1025c72c94493b480",
+        "status" : "passed",
+        "time" : {
+          "start" : 1748261331177,
+          "stop" : 1748261333733,
+          "duration" : 2556
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "65fa494f729651f1025c72c94493b480"
     } ],
-    "uid" : "ea33463f7018f82fc44cfd3f5a23a0de"
+    "uid" : "d39f3a63a9072722ab20358d63db3317"
   } ],
   "name" : "timeline"
 }

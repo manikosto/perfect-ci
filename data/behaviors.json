@@ -6,26 +6,26 @@
       "name" : "Feature",
       "children" : [ {
         "name" : "Test Example",
-        "uid" : "8b90690294e198a9",
+        "uid" : "4d9db4bf98b1e065",
         "parentUid" : "90cab89c41dd1a9e23b16bb11e2aa584",
         "status" : "passed",
         "time" : {
-          "start" : 1748260744544,
-          "stop" : 1748260747341,
-          "duration" : 2797
+          "start" : 1748261331166,
+          "stop" : 1748261333753,
+          "duration" : 2587
         },
         "flaky" : false,
         "newFailed" : false,
         "parameters" : [ ]
       }, {
         "name" : "Test Example 2",
-        "uid" : "6368e3adaeb967fc",
+        "uid" : "b1b3872691c43b1e",
         "parentUid" : "90cab89c41dd1a9e23b16bb11e2aa584",
         "status" : "passed",
         "time" : {
-          "start" : 1748260744547,
-          "stop" : 1748260747306,
-          "duration" : 2759
+          "start" : 1748261331177,
+          "stop" : 1748261333733,
+          "duration" : 2556
         },
         "flaky" : false,
         "newFailed" : false,

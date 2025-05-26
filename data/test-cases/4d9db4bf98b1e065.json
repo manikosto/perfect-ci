@@ -1,0 +1,145 @@
+{
+  "uid" : "4d9db4bf98b1e065",
+  "name" : "Test Example",
+  "fullName" : "tests.test_example.TestExample#test_example",
+  "historyId" : "2133fcefc80b68a454be42153edbc3e8",
+  "time" : {
+    "start" : 1748261331166,
+    "stop" : 1748261333753,
+    "duration" : 2587
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ {
+    "name" : "driver",
+    "time" : {
+      "start" : 1748261330198,
+      "stop" : 1748261331165,
+      "duration" : 967
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ {
+      "name" : "Open page",
+      "time" : {
+        "start" : 1748261331166,
+        "stop" : 1748261333753,
+        "duration" : 2587
+      },
+      "status" : "passed",
+      "steps" : [ ],
+      "attachments" : [ {
+        "uid" : "caa2fdb4753291d3",
+        "name" : "Screenshot",
+        "source" : "caa2fdb4753291d3.png",
+        "type" : "image/png",
+        "size" : 25646
+      } ],
+      "parameters" : [ ],
+      "attachmentsCount" : 1,
+      "shouldDisplayMessage" : false,
+      "stepsCount" : 0,
+      "hasContent" : true
+    } ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 1,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 1,
+    "hasContent" : true
+  },
+  "afterStages" : [ {
+    "name" : "driver::0",
+    "time" : {
+      "start" : 1748261333754,
+      "stop" : 1748261333822,
+      "duration" : 68
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "attachmentsCount" : 0,
+    "shouldDisplayMessage" : false,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "labels" : [ {
+    "name" : "epic",
+    "value" : "Example"
+  }, {
+    "name" : "feature",
+    "value" : "Feature"
+  }, {
+    "name" : "tag",
+    "value" : "smoke"
+  }, {
+    "name" : "parentSuite",
+    "value" : "tests"
+  }, {
+    "name" : "suite",
+    "value" : "test_example"
+  }, {
+    "name" : "subSuite",
+    "value" : "TestExample"
+  }, {
+    "name" : "host",
+    "value" : "48bb7952f271"
+  }, {
+    "name" : "thread",
+    "value" : "7-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "tests.test_example"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "history" : {
+      "statistic" : {
+        "failed" : 0,
+        "broken" : 0,
+        "skipped" : 0,
+        "passed" : 2,
+        "unknown" : 0,
+        "total" : 2
+      },
+      "items" : [ {
+        "uid" : "8b90690294e198a9",
+        "status" : "passed",
+        "time" : {
+          "start" : 1748260744544,
+          "stop" : 1748260747341,
+          "duration" : 2797
+        }
+      } ]
+    },
+    "tags" : [ "smoke" ]
+  },
+  "source" : "4d9db4bf98b1e065.json",
+  "parameterValues" : [ ]
+}
