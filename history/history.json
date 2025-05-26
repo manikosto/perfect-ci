@@ -1,0 +1,42 @@
+{
+  "9ca033b82d8731833a604592d72d77b2" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 1,
+      "skipped" : 0,
+      "passed" : 0,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "81efe825b47ad58e",
+      "status" : "broken",
+      "statusDetails" : "selenium.common.exceptions.InvalidArgumentException: Message: invalid argument\n  (Session info: chrome=131.0.6778.108)",
+      "time" : {
+        "start" : 1748259597607,
+        "stop" : 1748259597613,
+        "duration" : 6
+      }
+    } ]
+  },
+  "2133fcefc80b68a454be42153edbc3e8" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 1,
+      "skipped" : 0,
+      "passed" : 0,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "26298ddf1efda22c",
+      "status" : "broken",
+      "statusDetails" : "selenium.common.exceptions.InvalidArgumentException: Message: invalid argument\n  (Session info: chrome=131.0.6778.108)",
+      "time" : {
+        "start" : 1748259597579,
+        "stop" : 1748259597587,
+        "duration" : 8
+      }
+    } ]
+  }
+}

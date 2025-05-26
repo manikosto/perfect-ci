@@ -1,0 +1,43 @@
+{
+  "uid" : "98d3104e051c652961429bf95fa0b5d6",
+  "children" : [ {
+    "name" : "tests",
+    "children" : [ {
+      "name" : "test_example",
+      "children" : [ {
+        "name" : "TestExample",
+        "children" : [ {
+          "name" : "Test Example",
+          "uid" : "26298ddf1efda22c",
+          "parentUid" : "dba2c98cf57337371168134be9b6792d",
+          "status" : "broken",
+          "time" : {
+            "start" : 1748259597579,
+            "stop" : 1748259597587,
+            "duration" : 8
+          },
+          "flaky" : false,
+          "newFailed" : false,
+          "parameters" : [ ]
+        }, {
+          "name" : "Test Example 2",
+          "uid" : "81efe825b47ad58e",
+          "parentUid" : "dba2c98cf57337371168134be9b6792d",
+          "status" : "broken",
+          "time" : {
+            "start" : 1748259597607,
+            "stop" : 1748259597613,
+            "duration" : 6
+          },
+          "flaky" : false,
+          "newFailed" : false,
+          "parameters" : [ ]
+        } ],
+        "uid" : "dba2c98cf57337371168134be9b6792d"
+      } ],
+      "uid" : "d892bcee413138327cd64de6b84adf04"
+    } ],
+    "uid" : "e387fa4bb326b54ea8c19c2822aba374"
+  } ],
+  "name" : "suites"
+}

@@ -1,0 +1,13 @@
+[ {
+  "values" : [ "main" ],
+  "name" : "Branch"
+}, {
+  "values" : [ "0c5b2b3ec94b5d30576c0771dc43aa9c5d602303" ],
+  "name" : "Commit"
+}, {
+  "values" : [ "" ],
+  "name" : "Browser"
+}, {
+  "values" : [ "" ],
+  "name" : "Stage"
+} ]

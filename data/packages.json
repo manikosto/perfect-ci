@@ -1,0 +1,35 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "children" : [ {
+    "name" : "tests.test_example",
+    "children" : [ {
+      "name" : "Test Example",
+      "uid" : "26298ddf1efda22c",
+      "parentUid" : "d41b485e6ae74c08f28d57b63af1a517",
+      "status" : "broken",
+      "time" : {
+        "start" : 1748259597579,
+        "stop" : 1748259597587,
+        "duration" : 8
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "Test Example 2",
+      "uid" : "81efe825b47ad58e",
+      "parentUid" : "d41b485e6ae74c08f28d57b63af1a517",
+      "status" : "broken",
+      "time" : {
+        "start" : 1748259597607,
+        "stop" : 1748259597613,
+        "duration" : 6
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "tests.test_example"
+  } ],
+  "name" : "packages"
+}
