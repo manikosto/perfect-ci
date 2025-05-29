@@ -26,9 +26,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            pip install -r requirements.txt \
-                        pytest-xdist[psutil] \
-                        allure-pytest
+            pip install -r requirements.txt
 
       # ─── 3. Тесты + JUnit XML ────────────────────────────────────
       - run:
@@ -52,11 +50,20 @@ jobs:
           keys: [ "allure-history-{{ .Branch }}-" ]
 
       - run:
+          name: Preparing Allure history
+          command: |
+            if [ -d "allure-report/history" ]; then
+              mkdir -p allure-results/history
+              cp -r allure-report/history allure-results/
+            else
+              echo "No history to restore"
+            fi
+
+      - run:
           name: Setup Allure env variables
           command: |
-            mkdir -p allure-results
             echo "Branch=$CIRCLE_BRANCH" > allure-results/environment.properties
-            echo "Commit=$CIRCLE_SHA1"  >> allure-results/environment.properties
+            echo "Commit=$CIRCLE_SHA1"   >> allure-results/environment.properties
 
       - run:
           name: Generate Allure report
