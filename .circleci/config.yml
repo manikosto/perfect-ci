@@ -66,6 +66,7 @@ jobs:
           command: |
             echo "Branch=$CIRCLE_BRANCH" > allure-results/environment.properties
             echo "Commit=$CIRCLE_SHA1" >> allure-results/environment.properties
+            echo "Browser=$BROWSER" >> allure-results/environment.properties
             echo "{\"name\": \"CircleCI\", \"type\": \"circleci\", \"url\": \"$CIRCLE_REPOSITORY_URL\", \"buildOrder\": $CIRCLE_BUILD_NUM, \"buildName\": \"$CIRCLE_BRANCH\", \"buildUrl\": \"$CIRCLE_BUILD_URL\", \"reportUrl\": \"URL отчета\", \"reportName\": \"Отчет о тестировании\"}" > allure-results/executor.json
 
       # 7. отчёт
