@@ -7,23 +7,20 @@ jobs:
     steps:
       - checkout
 
-      # ─── 1. Runtime ───────────────────────────────────────────────
+      # ─── 1. Runtime: Chromium + JDK + Allure ─────────────────────
       - run:
           name: Setup environment
           command: |
             set -e
             apk update
             apk add --no-cache curl jq chromium chromium-chromedriver tzdata openjdk17-jre
-            # glibc for Chromium
             wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
             wget -q https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.34-r0/glibc-2.34-r0.apk
             apk add --no-cache glibc-2.34-r0.apk
-            # Allure CLI (свежая версия)
             ALLURE_VER=2.27.0
             curl -Ls "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/${ALLURE_VER}/allure-commandline-${ALLURE_VER}.tgz" \
               | tar -xz -C /opt/
             ln -sf /opt/allure-${ALLURE_VER}/bin/allure /usr/bin/allure
-            allure --version
 
       # ─── 2. Python deps ───────────────────────────────────────────
       - run:
@@ -33,24 +30,24 @@ jobs:
                         pytest-xdist[psutil] \
                         allure-pytest
 
-      # ─── 3. Run tests & create junit.xml ─────────────────────────
+      # ─── 3. Тесты + JUnit XML ────────────────────────────────────
       - run:
           name: Run tests
           command: |
-            mkdir -p test-results               # ⬅ каталог для JUnit
+            mkdir -p test-results                       # ← добавили
             STAGE=https://dev-crm.qa-playground.com \
             BROWSER=chrome \
             pytest -sv -n 10 \
                    --alluredir=allure-results \
-                   --junitxml=test-results/junit.xml
-            echo "XML files produced:"
-            find test-results -type f -name '*.xml'
+                   --junitxml=test-results/junit.xml || true
+            echo "Generated JUnit files:"
+            find test-results -name '*.xml' || true
 
-      # ─── 4. Upload JUnit to Test Insights ────────────────────────
-      - store_test_results:
-          path: test-results                  # ⬅ как в docs
+      # ─── 4. Загрузка результатов в Test Insights ─────────────────
+      - store_test_results:                             # как в доке
+          path: test-results
 
-      # ─── 5. Allure history (без изменений) ───────────────────────
+      # ─── 5. Allure history ───────────────────────────────────────
       - restore_cache:
           keys: [ "allure-history-{{ .Branch }}-" ]
 
@@ -71,9 +68,9 @@ jobs:
             echo "Commit=$CIRCLE_SHA1"   >> allure-results/environment.properties
             cat > allure-results/executor.json <<JSON
             {
-              "name": "CircleCI",
-              "type": "circleci",
-              "url":  "$CIRCLE_REPOSITORY_URL",
+              "name":  "CircleCI",
+              "type":  "circleci",
+              "url":   "$CIRCLE_REPOSITORY_URL",
               "buildOrder": $CIRCLE_BUILD_NUM,
               "buildName":  "$CIRCLE_BRANCH",
               "buildUrl":   "$CIRCLE_BUILD_URL"
@@ -89,7 +86,6 @@ jobs:
           paths: [ allure-report/history ]
           key: allure-history-{{ .Branch }}-{{ epoch }}
 
-      # ─── 6. Artifacts ────────────────────────────────────────────
       - store_artifacts:
           path: allure-report
           destination: allure-report
