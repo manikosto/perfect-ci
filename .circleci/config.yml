@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   run_tests:
     docker:
-      - image: python:3.12.0a4-alpine3.17  # Определение Docker образа для среды выполнения тестов
+      - image: python:3.12.0a4-alpine3.19  # Определение Docker образа для среды выполнения тестов
     steps:
       - checkout  # Клонирование репозитория в среду выполнения CircleCI
 
