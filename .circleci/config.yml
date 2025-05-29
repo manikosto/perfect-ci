@@ -1,111 +1,95 @@
 version: 2.1
 
-parameters:            # ← позволяет запускать один и тот же workflow с разными значениями
-  env:     {type: string, default: "dev"}
-  browser: {type: string, default: "chrome"}
-  marker:  {type: string, default: "smoke"}
-  threads: {type: string, default: "10"}
-
-executors:
-  alpine-python:
-    docker:
-      - image: python:3.12.3-alpine3.19        # стабильный build
-    environment:
-      BROWSER: << pipeline.parameters.browser >>
-      MARKER:  << pipeline.parameters.marker >>
-      THREADS: << pipeline.parameters.threads >>
-      STAGE:   ${STAGE}                        # секрет
-    resource_class: medium
-
-commands:
-  install_runtime:
-    description: "Chromium, JDK, Allure"
-    steps:
-      - run:
-          name: Setup environment (Chromium + JDK + Allure)
-          command: |
-            apk add --update --no-cache \
-              curl jq chromium chromium-chromedriver \
-              openjdk17-jre tzdata
-            # Allure → используем свежую версию
-            ALLURE_VER=2.27.0
-            curl -Ls "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/${ALLURE_VER}/allure-commandline-${ALLURE_VER}.tgz" \
-              | tar -xz -C /opt/
-            ln -sf /opt/allure-${ALLURE_VER}/bin/allure /usr/bin/allure
-
 jobs:
   run_tests:
-    executor: alpine-python
+    docker:
+      - image: python:3.12.0a4-alpine3.17  # Определение Docker образа для среды выполнения тестов
     steps:
-      - checkout
-      - restore_cache:
-          keys: [ "pip-cache-{{ .Branch }}" ]
-      - run: pip install -r requirements.txt
-      - save_cache:
-          paths: [ "~/.cache/pip" ]
-          key: pip-cache-{{ .Branch }}
-      - install_runtime       # команда из блока commands
+      - checkout  # Клонирование репозитория в среду выполнения CircleCI
+
+      # Настройка среды выполнения, включая установку необходимых пакетов и инструментов
+      - run:
+          name: Setup environment
+          command: |
+            apk add curl jq  # Установка curl и jq для обработки HTTP запросов и данных JSON
+            apk update  # Обновление списка пакетов
+            apk add --no-cache chromium chromium-chromedriver tzdata  # Установка Chromium и его WebDriver
+            wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub  # Добавление ключа для glibc
+            wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-2.30-r0.apk  # Загрузка glibc
+            wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-bin-2.30-r0.apk  # Загрузка бинарных файлов glibc
+            apk add --no-cache curl openjdk11-jre  # Установка Java Runtime Environment
+            curl -o allure-2.13.8.tgz -Ls https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.13.8/allure-commandline-2.13.8.tgz  # Загрузка Allure
+            tar -zxvf allure-2.13.8.tgz -C /opt/  # Распаковка Allure
+            ln -s /opt/allure-2.13.8/bin/allure /usr/bin/allure  # Создание символической ссылки для Allure
+            rm allure-2.13.8.tgz  # Удаление архива Allure после установки
+
+      # Установка зависимостей Python из файла requirements.txt
+      - run:
+          name: Install dependencies
+          command: |
+            pip install -r requirements.txt
+
+      # Запуск тестов с передачей переменных окружения
       - run:
           name: Run tests
           command: |
-            pytest -sv \
-              -m "<< pipeline.parameters.marker >>" \
-              --threads="<< pipeline.parameters.threads >>" \
-              --alluredir=allure-results \
-              --junitxml=test-results/junit.xml
-      - persist_to_workspace: # передаём результаты дальше
-          root: .
-          paths: [ allure-results ]
+            STAGE=dev BROWSER=chrome pytest -sv --alluredir=allure-results --junitxml=test-results/junit.xml || true
 
-  generate_report:
-    executor: alpine-python
-    steps:
-      - checkout
-      - attach_workspace: { at: . }
-      # history из кеша
+      # Восстановление кэша с предыдущих сборок для Allure истории
       - restore_cache:
-          keys: [ "allure-history-{{ .Branch }}" ]
+          keys:
+            - allure-history-{{ .Branch }}-
+
+      # Подготовка истории Allure для текущей сборки
       - run:
-          name: Prepare Allure history
+          name: Prepairing of Allure History
           command: |
-            mkdir -p allure-results/history
-            [ -d allure-report/history ] && cp -R allure-report/history allure-results/ || true
+            if [ -d "allure-report/history" ]; then
+              mkdir -p allure-results/history
+              cp -r allure-report/history allure-results/
+            else
+              echo "No history to restore"
+
+      # Получение ID Job из CircleCI через API для использования в отчетах
+      - run:
+          name: Get CircleCI Job ID
+          command: |
+            curl -H "Circle-Token: ${CIRCLECI_API_TOKEN}" "https://circleci.com/api/v2/workflow/${CIRCLE_WORKFLOW_ID}/job" > jobs.json
+            JOB_ID=$(cat jobs.json | jq -r '.items[] | select(.name=="run_tests").id')  # Извлечение Job ID для текущей задачи
+            echo "export CIRCLE_JOB_ID=$JOB_ID" >> $BASH_ENV
+            source $BASH_ENV
+
+      # Установка переменных окружения для Allure отчета
+      - run:
+          name: Setup Allure env variables
+          command: |
+            echo "Branch=$CIRCLE_BRANCH" > allure-results/environment.properties
+            echo "Commit=$CIRCLE_SHA1" >> allure-results/environment.properties
+            echo "{\"name\": \"CircleCI\", \"type\": \"circleci\", \"url\": \"$CIRCLE_REPOSITORY_URL\", \"buildOrder\": $CIRCLE_BUILD_NUM, \"buildName\": \"$CIRCLE_BRANCH\", \"buildUrl\": \"$CIRCLE_BUILD_URL\", \"reportUrl\": \"URL отчета\", \"reportName\": \"Отчет о тестировании\"}" > allure-results/executor.json
+
+      # Генерация Allure отчета
       - run:
           name: Generate Allure report
-          command: allure generate allure-results --clean -o allure-report
-      - save_cache:
-          paths: [ allure-report/history ]
-          key: allure-history-{{ .Branch }}-{{ epoch }}
-      - persist_to_workspace:
-          root: .
-          paths: [ allure-report ]
-
-  deploy_gh_pages:
-    docker:    # более лёгкий образ, только git + node не нужен
-      - image: cimg/base:current
-    steps:
-      - attach_workspace: { at: . }
-      - run:
-          name: Deploy to gh-pages
           command: |
-            git config --global user.name  "circleci"
-            git config --global user.email "bot@example.com"
-            git fetch origin gh-pages || true
-            git checkout gh-pages || git checkout --orphan gh-pages
-            rsync -a --delete allure-report/ .
-            git add -A
-            git commit -m "docs: update Allure report ${CIRCLE_SHA1:0:7}" || true
-            git push "https://${CI_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git" gh-pages
+            allure generate allure-results --clean -o allure-report
+
+      # Сохранение кэша истории Allure
+      - save_cache:
+          paths:
+            - allure-report/history
+          key: allure-history-{{ .Branch }}-{{ epoch }}
+
+      # Сохранение артефактов (Allure отчет)
+      - store_artifacts:
+          path: allure-report
+          destination: allure-report
+
+      # Сохранение результатов тестов
+      - store_test_results:
+          path: test-results
 
 workflows:
   version: 2
-  ui_tests_and_report:
+  build_and_deploy:
     jobs:
       - run_tests
-      - generate_report:
-          requires: [ run_tests ]
-      - deploy_gh_pages:
-          requires: [ generate_report ]
-          filters:
-            branches:
-              only: main
