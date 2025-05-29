@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            STAGE=dev BROWSER=chrome pytest -sv --alluredir=allure-results --junitxml=test-results/junit.xml || true
+            STAGE=https://dev-crm.qa-playground.com BROWSER=chrome pytest -sv --alluredir=allure-results --junitxml=test-results/junit.xml || true
 
       # Восстановление кэша с предыдущих сборок для Allure истории
       - restore_cache:
