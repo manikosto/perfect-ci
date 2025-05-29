@@ -68,26 +68,25 @@ jobs:
             echo "Commit=$CIRCLE_SHA1" >> allure-results/environment.properties
             echo "{\"name\": \"CircleCI\", \"type\": \"circleci\", \"url\": \"$CIRCLE_REPOSITORY_URL\", \"buildOrder\": $CIRCLE_BUILD_NUM, \"buildName\": \"$CIRCLE_BRANCH\", \"buildUrl\": \"$CIRCLE_BUILD_URL\", \"reportUrl\": \"URL отчета\", \"reportName\": \"Отчет о тестировании\"}" > allure-results/executor.json
 
-      # Генерация Allure отчета
+      # 7. отчёт
       - run:
           name: Generate Allure report
           command: |
             allure generate allure-results --clean -o allure-report
 
-      # Сохранение кэша истории Allure
+      # 8. кеш истории
       - save_cache:
-          paths:
-            - allure-report/history
+          paths: [ allure-report/history ]
           key: allure-history-{{ .Branch }}-{{ epoch }}
 
-      # Сохранение артефактов (Allure отчет)
+      # 9. артефакты
       - store_artifacts:
           path: allure-report
           destination: allure-report
 
-      # Сохранение результатов тестов
+      # 10. 👉 результаты для Test Insights
       - store_test_results:
-          path: test-results
+          path: test-results 
 
 workflows:
   version: 2
