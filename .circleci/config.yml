@@ -1,144 +1,111 @@
 version: 2.1
 
-# ─────────────────────────
-# 1. ПАРАМЕТРЫ PIPELINE
-# ─────────────────────────
-parameters:
-  env:
-    type: string
-    default: "dev"          # CI → Trigger Pipeline → env
-  browser:
-    type: string
-    default: "chrome"       # chrome | firefox | safari
-  marker:
-    type: string
-    default: "smoke"        # smoke  | regression
-  threads:
-    type: string
-    default: "10"           # 5 | 10
+parameters:            # ← позволяет запускать один и тот же workflow с разными значениями
+  env:     {type: string, default: "dev"}
+  browser: {type: string, default: "chrome"}
+  marker:  {type: string, default: "smoke"}
+  threads: {type: string, default: "10"}
 
-# ─────────────────────────
-# 2. ОРБЫ (готовые реиспользуемые блоки)
-# ─────────────────────────
-orbs:
-  gh-pages: circleci/gh-pages@1.1.0   # для деплоя в GitHub Pages
-
-# ─────────────────────────
-# 3. ГЛОБАЛЬНЫЕ EXECUTORS
-# ─────────────────────────
 executors:
-  docker-dind:
+  alpine-python:
     docker:
-      - image: docker:24.0.6               # слой, где выполняются команды
-      - image: docker:24.0.6-dind          # service-контейнер с Docker-daemon
-        command: ["--tls=false"]
+      - image: python:3.12.3-alpine3.19        # стабильный build
     environment:
-      DOCKER_HOST: tcp://localhost:2375
-      DOCKER_DRIVER: overlay2
-      # Прокидываем параметры как переменные окружения
       BROWSER: << pipeline.parameters.browser >>
-      STAGE:   ${STAGE}                    # секрет CircleCI (Project → Environment Variables)
       MARKER:  << pipeline.parameters.marker >>
       THREADS: << pipeline.parameters.threads >>
+      STAGE:   ${STAGE}                        # секрет
+    resource_class: medium
 
-# ─────────────────────────
-# 4. КОМАНДЫ
-# ─────────────────────────
 commands:
-  prepare-allure-env:
+  install_runtime:
+    description: "Chromium, JDK, Allure"
     steps:
       - run:
-          name: "Create Allure environment.properties"
+          name: Setup environment (Chromium + JDK + Allure)
           command: |
-            mkdir -p allure-results
-            cat > allure-results/environment.properties <<EOF
-            Branch=${CIRCLE_BRANCH}
-            Commit=${CIRCLE_SHA1:0:8}
-            Browser=$BROWSER
-            Stage=$STAGE
-            EOF
+            apk add --update --no-cache \
+              curl jq chromium chromium-chromedriver \
+              openjdk17-jre tzdata
+            # Allure → используем свежую версию
+            ALLURE_VER=2.27.0
+            curl -Ls "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/${ALLURE_VER}/allure-commandline-${ALLURE_VER}.tgz" \
+              | tar -xz -C /opt/
+            ln -sf /opt/allure-${ALLURE_VER}/bin/allure /usr/bin/allure
 
-  checkout-gh-pages:
-    steps:
-      - run:
-          name: "Fetch gh-pages branch"
-          command: |
-            git fetch origin gh-pages:gh-pages || true
-            mkdir -p ./.github
-            git worktree add ./.github/gh-pages gh-pages || true
-
-# ─────────────────────────
-# 5. JOBS
-# ─────────────────────────
 jobs:
-  ui-tests:
-    executor: docker-dind
+  run_tests:
+    executor: alpine-python
     steps:
       - checkout
-      - checkout-gh-pages
-      - prepare-allure-env
+      - restore_cache:
+          keys: [ "pip-cache-{{ .Branch }}" ]
+      - run: pip install -r requirements.txt
+      - save_cache:
+          paths: [ "~/.cache/pip" ]
+          key: pip-cache-{{ .Branch }}
+      - install_runtime       # команда из блока commands
       - run:
-          name: "Run tests via docker-compose"
-          command: docker compose up tests
-      - persist_to_workspace:
+          name: Run tests
+          command: |
+            pytest -sv \
+              -m "<< pipeline.parameters.marker >>" \
+              --threads="<< pipeline.parameters.threads >>" \
+              --alluredir=allure-results \
+              --junitxml=test-results/junit.xml
+      - persist_to_workspace: # передаём результаты дальше
           root: .
-          paths:
-            - allure-results
+          paths: [ allure-results ]
 
-  generate-report:
-    executor: docker-dind
+  generate_report:
+    executor: alpine-python
     steps:
-      - attach_workspace:
-          at: .
+      - checkout
+      - attach_workspace: { at: . }
+      # history из кеша
+      - restore_cache:
+          keys: [ "allure-history-{{ .Branch }}" ]
       - run:
-          name: "Copy Allure history (if any)"
+          name: Prepare Allure history
           command: |
             mkdir -p allure-results/history
-            cp -R ./.github/gh-pages/history/* allure-results/history/ 2>/dev/null || true
+            [ -d allure-report/history ] && cp -R allure-report/history allure-results/ || true
       - run:
-          name: "Generate Allure report"
-          command: docker compose up report
-      - run:
-          name: "Move report to workspace/public"
-          command: |
-            mkdir -p public
-            mv allure-report/* public/
+          name: Generate Allure report
+          command: allure generate allure-results --clean -o allure-report
+      - save_cache:
+          paths: [ allure-report/history ]
+          key: allure-history-{{ .Branch }}-{{ epoch }}
       - persist_to_workspace:
           root: .
-          paths:
-            - public
+          paths: [ allure-report ]
 
-  deploy-gh-pages:
-    # orb `gh-pages/deploy` требует node-image, но мы можем вызвать curl-деплой вручную
-    docker:
+  deploy_gh_pages:
+    docker:    # более лёгкий образ, только git + node не нужен
       - image: cimg/base:current
     steps:
-      - attach_workspace:
-          at: .
+      - attach_workspace: { at: . }
       - run:
-          name: "Deploy to GitHub Pages"
+          name: Deploy to gh-pages
           command: |
-            git config --global user.email "ci-bot@example.com"
             git config --global user.name  "circleci"
-            git fetch origin gh-pages || git checkout --orphan gh-pages
+            git config --global user.email "bot@example.com"
+            git fetch origin gh-pages || true
             git checkout gh-pages || git checkout --orphan gh-pages
-            cp -R public/* .
-            git add --all
-            git commit -m "ci: update Allure report (${CIRCLE_SHA1:0:8})" || echo "Nothing to commit"
+            rsync -a --delete allure-report/ .
+            git add -A
+            git commit -m "docs: update Allure report ${CIRCLE_SHA1:0:7}" || true
             git push "https://${CI_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git" gh-pages
-          no_output_timeout: 10m
 
-# ─────────────────────────
-# 6. WORKFLOW
-# ─────────────────────────
 workflows:
-  ui-tests-and-report:
+  version: 2
+  ui_tests_and_report:
     jobs:
-      - ui-tests
-      - generate-report:
-          requires: [ui-tests]
-      - deploy-gh-pages:
-          requires: [generate-report]
+      - run_tests
+      - generate_report:
+          requires: [ run_tests ]
+      - deploy_gh_pages:
+          requires: [ generate_report ]
           filters:
             branches:
-              only: main   # развёртывать отчёт только с ветки main (или настройте по-другому)
+              only: main
