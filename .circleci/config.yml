@@ -1,0 +1,144 @@
+version: 2.1
+
+# ─────────────────────────
+# 1. ПАРАМЕТРЫ PIPELINE
+# ─────────────────────────
+parameters:
+  env:
+    type: string
+    default: "dev"          # CI → Trigger Pipeline → env
+  browser:
+    type: string
+    default: "chrome"       # chrome | firefox | safari
+  marker:
+    type: string
+    default: "smoke"        # smoke  | regression
+  threads:
+    type: string
+    default: "10"           # 5 | 10
+
+# ─────────────────────────
+# 2. ОРБЫ (готовые реиспользуемые блоки)
+# ─────────────────────────
+orbs:
+  gh-pages: circleci/gh-pages@1.1.0   # для деплоя в GitHub Pages
+
+# ─────────────────────────
+# 3. ГЛОБАЛЬНЫЕ EXECUTORS
+# ─────────────────────────
+executors:
+  docker-dind:
+    docker:
+      - image: docker:24.0.6               # слой, где выполняются команды
+      - image: docker:24.0.6-dind          # service-контейнер с Docker-daemon
+        command: ["--tls=false"]
+    environment:
+      DOCKER_HOST: tcp://localhost:2375
+      DOCKER_DRIVER: overlay2
+      # Прокидываем параметры как переменные окружения
+      BROWSER: << pipeline.parameters.browser >>
+      STAGE:   ${STAGE}                    # секрет CircleCI (Project → Environment Variables)
+      MARKER:  << pipeline.parameters.marker >>
+      THREADS: << pipeline.parameters.threads >>
+
+# ─────────────────────────
+# 4. КОМАНДЫ
+# ─────────────────────────
+commands:
+  prepare-allure-env:
+    steps:
+      - run:
+          name: "Create Allure environment.properties"
+          command: |
+            mkdir -p allure-results
+            cat > allure-results/environment.properties <<EOF
+            Branch=${CIRCLE_BRANCH}
+            Commit=${CIRCLE_SHA1:0:8}
+            Browser=$BROWSER
+            Stage=$STAGE
+            EOF
+
+  checkout-gh-pages:
+    steps:
+      - run:
+          name: "Fetch gh-pages branch"
+          command: |
+            git fetch origin gh-pages:gh-pages || true
+            mkdir -p ./.github
+            git worktree add ./.github/gh-pages gh-pages || true
+
+# ─────────────────────────
+# 5. JOBS
+# ─────────────────────────
+jobs:
+  ui-tests:
+    executor: docker-dind
+    steps:
+      - checkout
+      - checkout-gh-pages
+      - prepare-allure-env
+      - run:
+          name: "Run tests via docker-compose"
+          command: docker compose up tests
+      - persist_to_workspace:
+          root: .
+          paths:
+            - allure-results
+
+  generate-report:
+    executor: docker-dind
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Copy Allure history (if any)"
+          command: |
+            mkdir -p allure-results/history
+            cp -R ./.github/gh-pages/history/* allure-results/history/ 2>/dev/null || true
+      - run:
+          name: "Generate Allure report"
+          command: docker compose up report
+      - run:
+          name: "Move report to workspace/public"
+          command: |
+            mkdir -p public
+            mv allure-report/* public/
+      - persist_to_workspace:
+          root: .
+          paths:
+            - public
+
+  deploy-gh-pages:
+    # orb `gh-pages/deploy` требует node-image, но мы можем вызвать curl-деплой вручную
+    docker:
+      - image: cimg/base:current
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Deploy to GitHub Pages"
+          command: |
+            git config --global user.email "ci-bot@example.com"
+            git config --global user.name  "circleci"
+            git fetch origin gh-pages || git checkout --orphan gh-pages
+            git checkout gh-pages || git checkout --orphan gh-pages
+            cp -R public/* .
+            git add --all
+            git commit -m "ci: update Allure report (${CIRCLE_SHA1:0:8})" || echo "Nothing to commit"
+            git push "https://${CI_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git" gh-pages
+          no_output_timeout: 10m
+
+# ─────────────────────────
+# 6. WORKFLOW
+# ─────────────────────────
+workflows:
+  ui-tests-and-report:
+    jobs:
+      - ui-tests
+      - generate-report:
+          requires: [ui-tests]
+      - deploy-gh-pages:
+          requires: [generate-report]
+          filters:
+            branches:
+              only: main   # развёртывать отчёт только с ветки main (или настройте по-другому)
