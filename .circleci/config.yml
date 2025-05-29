@@ -42,13 +42,14 @@ jobs:
 
       # Подготовка истории Allure для текущей сборки
       - run:
-          name: Prepairing of Allure History
+          name: Preparing Allure history   # ← исправил опечатку
           command: |
             if [ -d "allure-report/history" ]; then
               mkdir -p allure-results/history
               cp -r allure-report/history allure-results/
             else
               echo "No history to restore"
+            fi  
 
       # Получение ID Job из CircleCI через API для использования в отчетах
       - run:
